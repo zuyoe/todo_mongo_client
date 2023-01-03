@@ -63,7 +63,21 @@ const Todo = () => {
   }, []);
 
   const deleteClick = useCallback(
-    (id) => {
+    (id) => {      
+      if (window.confirm("정말 삭제하시겠습니까?")) {
+        
+        let body = {
+          id: id,
+        };
+        axios.post("/api/post/delete", body )
+        .then(response=>{
+          console.log(response);
+        })
+        .cathch((error=>{
+          console.log(error);
+        }));
+      }
+
       // 클릭된 ID 와 다른 요소들만 걸러서 새로운 배열 생성
       const nowTodo = todoData.filter((item) => item.id !== id);
       // console.log("클릭", nowTodo);
@@ -71,7 +85,7 @@ const Todo = () => {
       // axios 를 이용해서 MongoDB 삭제 진행
       setTodoData(nowTodo);
       // 로컬에 저장한다.(DB 예정)
-      localStorage.setItem("todoData", JSON.stringify(nowTodo));
+      // localStorage.setItem("todoData", JSON.stringify(nowTodo));
     },
     [todoData]
   );
@@ -125,10 +139,18 @@ const Todo = () => {
   };
 
   const deleteAllClick = () => {
+      if (window.confirm("정말 삭제하시겠습니까?")) {
     // axios를 이용하여 MongoDB 목록 비워줌.
-    setTodoData([]); // 로컬에 저장한다.(DB 예정)
+    axios
+    .post("/api/post/deleteall")
+    .then(() => {
+      setTodoData([]);   
+    })
+    .catch((error) => console.log(error));
+    }
+    // 로컬에 저장한다.(DB 예정)
     // 자료를 지운다.(DB 초기화)
-    localStorage.clear();
+    // localStorage.clear();
   };
 
   return (
